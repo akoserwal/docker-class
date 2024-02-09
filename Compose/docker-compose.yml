@@ -1,0 +1,37 @@
+# docker-compose build
+# docker-compose up -d
+# docker-compose ps
+# docker-compose logs -f app
+# docker-compose down --volumes
+
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=caching_sha2_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    ports: 
+      - "3306:3306"
+    volumes: 
+      - my-db:/var/lib/mysql
+  app:
+    build: 
+      dockerfile: Dockerfile
+    # profiles:
+    #   - "app"
+    ports:
+      - 3000:3000
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+volumes:
+  my-db:
